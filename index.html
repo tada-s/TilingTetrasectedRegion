@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+<head>
+	<title>L-tromino tiling in a Tetrasected cell region</title>
+	<meta charset="UTF-8">
+	<style>
+		body{
+			font-family: 'Arial';
+			color: rgb(200, 200, 200);
+			background-image: url('dust_scratches2.png');
+		}
+
+		canvas{
+			margin-left: 50px;
+			border: 2px solid rgb(48, 48, 48);
+		}
+
+		p{
+			padding-left: 30px;
+		}
+
+		.title-bar{
+			background: rgb(1, 18, 79, .5);
+			padding-left: 30px;
+			padding-top: 10px;
+			padding-bottom: 1px;
+			color: rgb(71, 202, 255);
+		}
+
+		hr{
+			border-color: rgb(1, 18, 79, .5);
+		}
+
+		Button {
+			background-color: rgb(61, 146, 181);
+			font-size: 16px;
+			border: none;
+			border-radius: 7px;
+			color: white;
+			padding: 10px 20px;
+			text-align: center;
+			box-shadow: 0 5px #999;
+			transition-duration: 0.1s;
+		}
+		Button:hover {
+			background-color: rgb(71, 202, 255);
+		}
+		Button:active {
+			box-shadow: 0 2px #666;
+			transform: translateY(3px);
+		}
+	</style>
+</head>
+<body >
+	
+	<div class=title-bar>
+		<h1>L-tromino tiling in a Tetrasected cell region</h1>
+	</div>
+	
+	
+	<p>Click on the canvas to insert or remove a cell. Press the button to show or hide the spanning tree. <button id="buttonSpanningTree">Show spanning tree</button></p>
+
+	
+	<canvas id="canvasMain" width="1024px" height="768px"></canvas>
+	<br>
+	<br>
+	<hr>
+	<p style="color: rgb(66, 201, 194)">Coded in Javascript by Tadashi :)</p>
+
+	<script src="coordinates.js"></script>
+	<script src="events.js"></script>
+	<script src="draw.js"></script>
+	<script src="board.js"></script>
+
+</body>
+</html>
