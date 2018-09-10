@@ -22,6 +22,7 @@ function draw(){
 	if(paintColor){
 		fillCells();
 	}
+
 }
 
 /** Main draw methods **/

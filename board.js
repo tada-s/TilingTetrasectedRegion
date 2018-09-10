@@ -1,5 +1,5 @@
 /* 
- * This javascript implements the game rules.
+ * This javascript implements the main algorithm.
  */
 
 var board = {
@@ -97,9 +97,35 @@ function calculateTiling(){
 		for(var j = 0; j < board.cellColumn; j++){
 			if(board.cell[i][j] == CELL_EMPTY && cell_label[i][j] == LABEL_UNDEF){
 				// Transform a polyomino to graph
+//console.log("------------------------");
+				g = [];
+				g_visited = [];
+				label_cell = [];
+
 				makeGraph(i, j);
-				// Divide the graph into trees and tile
-				spawnTrees(cell_label[i][j]);
+
+				if(g.length % 3 == 0){
+//console.log("Component: (" + i + ", "+ j + ")");
+					// Divide the graph into trees and tile
+					var tree = generateSpanningTree3(g);
+					for(var u = 0; u < g.length; u++){
+						g_visited[u] = false;
+						for(var k = 0; k < g[u].length; k++){
+							var v = g[u][k];
+							if(!tree.areConnected(u, v)){
+								g[u].splice(k, 1);
+								k--;
+							}
+						}
+					}
+
+					for(var u = 0; u < g.length; u++){
+						if(!g_visited[u]){
+							colorCounter++;
+							generateTiling(u);
+						}
+					}
+				}
 			}
 		}
 	}
@@ -152,171 +178,6 @@ function makeGraph(i, j){
 	}
 }
 
-/** Manage the cycle and split the graph **/
-
-function spawnTrees(u){
-	floodValue(u, false);
-	if(graphSize(u) % 3 == 0){
-		// Spawn Tree, Cut Edges and Get Cycle
-		floodValue(u, false);
-		dfsCycleStart = LABEL_UNDEF;
-		dfsCycleEnd = LABEL_UNDEF;
-		getCycle(u, LABEL_UNDEF);
-
-		if(dfsCycle.length == 0){
-			// The graph is a tree. Calculate tilings.
-			floodValue(u, false);
-			generateTiling(u);
-			colorCounter++;
-		}else{
-			// There exists a cycle.
-			// Get the size of each spanning tree.
-			var s = [];
-			for(var i = 0; i < dfsCycle.length; i++){
-				floodValue(dfsCycle[i], false);
-				s.push(graphSize(dfsCycle[i], LABEL_UNDEF));
-			}
-			
-			// Partitionate in two set: A, B.
-			var vertexA = LABEL_UNDEF;
-			var vertexB = LABEL_UNDEF;
-			for(var i = 0; i < 3; i++){
-				var sum = 0;
-				for(var j = i; j < 3; j++){
-					sum += s[j];
-					if(sum % 3 == 0){
-						// Label of set B is false
-						for(var k = 0; k < dfsCycle.length; k++){
-							floodValue(dfsCycle[k], false);
-						}
-						// Label of set A is true
-						for(var k = i; k <= j; k++){
-							floodValue(dfsCycle[k], true);
-						}
-						vertexA = dfsCycle[j];
-						vertexB = dfsCycle[(j + 1) % dfsCycle.length];
-						break;
-					}
-				}
-				if(vertexB != LABEL_UNDEF){
-					break;
-				}
-			}
-
-			// Reconnect Edges
-			for(var i = 0; i < dfsCut.length; i++){
-				var c = dfsCut[i];
-				if(g_visited[c.u] == g_visited[c.v]){
-					g[c.u].push(c.v);
-				}
-			}
-			
-			dfsCut = [];
-			dfsCycle = [];
-			
-			// Recursive call
-			spawnTrees(vertexA);
-			spawnTrees(vertexB);
-		}
-	}
-}
-
-/** DFS to make a spanning tree and detect a cycle **/
-
-function getCycle(u, parent){
-	// If a cycle is detected, the information is stored in 'dfsCycleStart', 'dfsCycleEnd' and 'dfsCycle' variables.
-	// Every nontree deges will be stored in 'dfsCut' variable.
-	
-	var k_parent = -1;
-	
-	g_visited[u] = true;
-	for(var k = 0; k < g[u].length; k++){
-		var v = g[u][k];
-		if(v == parent){
-			k_parent = k;
-		}else{
-			if(g_visited[v]){
-				// Nontree Edge detected
-				if(dfsCycleStart == LABEL_UNDEF){
-					// First nontree edge is in a cycle.
-					dfsCycleStart = u;
-					dfsCycleEnd = v;
-					dfsCycle.push(u);
-				}
-
-				// Remove edge (u, v) from the graph and add to dfsCut
-				dfsCut.push({u:u, v:v});
-				[g[u][k], g[u][g[u].length - 1]] = [g[u][g[u].length - 1], g[u][k]];
-				g[u].pop();
-				k--;
-			}else{
-				getCycle(v, u);
-
-				if(dfsCycle.length > 0 && dfsCycle[dfsCycle.length - 1] == v && dfsCycle[dfsCycle.length - 1] != dfsCycleEnd){
-					// The edge (u, v) is in a cycle.
-					dfsCycle.push(u);
-
-					// Remove edge (u, v) from the graph and add to dfsCut
-					dfsCut.push({u:u, v:v});
-					[g[u][k], g[u][g[u].length - 1]] = [g[u][g[u].length - 1], g[u][k]];
-					g[u].pop();
-					k--;
-				}
-			}
-		}
-	}
-	
-	if(k_parent != -1){
-		var v = g[u][k_parent];
-		// if "u (current node) is part of a cycle" and "u is not the end of the cycle", then: the edge (u, parent) is in a cycle
-		if(v == parent && dfsCycle.length > 0 && dfsCycle[dfsCycle.length - 1] == u && u != dfsCycleEnd){
-			// Remove edge (u, parent) from the graph and add to dfsCut
-			dfsCut.push({u:u, v:v});
-			[g[u][k_parent], g[u][g[u].length - 1]] = [g[u][g[u].length - 1], g[u][k_parent]];
-			g[u].pop();
-		}
-	}
-}
-
-/** A DFS to get a number of connected vertices from u **/
-
-function graphSize(u){
-	var s = 1;
-	g_visited[u] = true;
-	for(var k = 0; k < g[u].length; k++){
-		var v = g[u][k];
-		if(!g_visited[v]){
-			s += graphSize(v);
-		}
-	}
-	return s;
-}
-
-/** A DFS to flood boolean value **/
-
-function floodValue(u, value){
-	g_visited[u] = value;
-	for(var k = 0; k < g[u].length; k++){
-		var v = g[u][k];
-		if(g_visited[v] != value){
-			floodValue(v, value);
-		}
-	}
-}
-
-/** A DFS to get a number of connected vertices from u, only for tree **/
-
-function treeSize(u, parent){
-	var sum = 1;
-	for(var k = 0; k < g[u].length; k++){
-		var v = g[u][k];
-		if(v != parent){
-			sum += treeSize(v, u);
-		}
-	}
-	return sum;
-}
-
 /** Calculate the cell type for each vertices in O(n) **/
 
 function generateTiling(u){
@@ -367,6 +228,22 @@ function generateTiling(u){
 			}
 		}
 	}
+}
+
+
+
+/** A DFS to get a number of connected vertices from u, only for tree **/
+
+function treeSize(u, parent){
+	var sum = 1;
+	for(var k = 0; k < g[u].length; k++){
+		var v = g[u][k];
+		if(v != parent){
+			sum += treeSize(v, u);
+		}
+	}
+	return sum;
+
 }
 
 
