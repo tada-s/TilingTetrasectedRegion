@@ -7,8 +7,8 @@ var board = {
 	rotation: [],
 	flip: [],
 	color: [],
-	cellRow: 100,
-	cellColumn: 100
+	cellRow: 300,
+	cellColumn: 300
 };
 
 const LABEL_UNDEF = -1;

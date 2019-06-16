@@ -68,9 +68,10 @@ function drawBoard(){
 /** Draw Trominoes **/
 
 function drawTrominoes(){
-	ctx.fillStyle = "rgba(50, 50, 50, 1)";
+	ctx.strokeStyle = "rgba(100, 100, 100, 1)";
+	ctx.fillStyle = "rgb(230, 230, 230)";
 
-	for(var i = 0; i < board.cellRow; i++){
+	for(var i = 0; i < board.cellRow; i++){	
 		for(var j = 0; j < board.cellColumn; j++){
 			var x = getCellX(i, j);
 			var y = getCellY(i, j);
@@ -231,7 +232,12 @@ function fillCells(){
 /** Draw a single tromino **/
 
 function drawTromino(x, y, rotation){
-	var delta = 3; // Padding parameter
+	var delta; // Padding parameter
+	if(false){
+		delta = 3; // Padding parameter
+	}else{
+		delta = 0; // Padding parameter
+	}
 	// Polygon coordinates of tromino in vx, vy
 	var vx = [
 		- 1 * 0.25 * sizeBoardCell + delta,
@@ -268,6 +274,7 @@ function drawTromino(x, y, rotation){
 	}
 	ctx.closePath();
 	ctx.fill();
+	ctx.stroke();
 }
 
 /** Draw a tetrasected cell **/

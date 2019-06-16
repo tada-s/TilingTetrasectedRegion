@@ -1,0 +1,99 @@
+body{
+	font-family: "Arial";
+	color: rgb(0, 0, 0);
+	background-color: rgb(200, 200, 200);
+	background-image: url("background-gray-Tetrasected.gif");
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 1024px;
+}
+
+canvas{
+	border: 2px solid rgb(48, 48, 48);
+	width: 100%;
+	max-width: 1000px;
+}
+
+p{
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+hr{
+	border-color: rgb(1, 18, 79, .5);
+}
+
+i{
+	font-family: "Times New Roman";
+}
+
+/* Division */
+div.divTitleBar{
+	background: rgb(1, 18, 79, .85);
+	padding-left: 30px;
+	padding-top: 10px;
+	padding-bottom: 1px;
+	color: rgb(71, 202, 255);
+}
+
+div.divPage {
+	background-color: white;
+}
+
+div.divCanvas {
+	background-color: white;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+}
+
+div.divCode{
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+/* Button */
+button {
+	background-color: rgb(61, 146, 181);
+	font-size: 16px;
+	border: none;
+	border-radius: 7px;
+	color: white;
+	padding: 10px 20px;
+	text-align: center;
+	box-shadow: 0 5px #999;
+	transition-duration: 0.1s;
+	margin-bottom: 5px;
+}
+button:enabled:active {
+	box-shadow: 0 2px #666;
+	transform: translateY(3px);
+	margin-bottom: 3px;
+}
+button:enabled:hover {
+	background-color: rgb(71, 202, 255);
+}
+button:disabled,
+button[disabled] {
+	background-color: #cccccc;
+	color: #666666;
+}
+button.edit:enabled {
+	background-color: rgb(232, 170, 78);
+}
+button.edit:enabled:hover {
+	background-color: rgb(255, 181, 71);
+}
+button.action:enabled {
+	background-color: rgb(74, 183, 226);
+}
+button.action:enabled:hover {
+	background-color: rgb(71, 202, 255);
+}
+button.view:enabled {
+	background-color: rgb(11, 186, 159);
+}
+button.view:enabled:hover {
+	background-color: rgb(0, 219, 186);
+}
+
